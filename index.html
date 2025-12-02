@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabriel Pristavu - Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- VARIABLES --- */
+        :root {
+            --bg: #050505;
+            --text: #ededed;
+            --accent: #C9A227;
+            --card-bg: #111;
+            --border: #333;
+            --glass: rgba(5, 5, 5, 0.9);
+        }
+
+        [data-theme="light"] {
+            --bg: #f0f0f0;
+            --text: #1a1a1a;
+            --accent: #b88a00;
+            --card-bg: #ffffff;
+            --border: #d1d1d1;
+            --glass: rgba(240, 240, 240, 0.9);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'General Sans', sans-serif;
+            overflow-x: hidden;
+            transition: background 0.5s, color 0.5s;
+        }
+
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+
+        /* CURSEUR */
+        .cursor {
+            position: fixed; width: 20px; height: 20px;
+            background: var(--accent); border-radius: 50%;
+            pointer-events: none; transform: translate(-50%, -50%);
+            z-index: 9999; mix-blend-mode: difference;
+            transition: width 0.2s, height 0.2s;
+        }
+        .cursor.hovered { width: 60px; height: 60px; opacity: 0.3; }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 25px 5%;
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            background: var(--glass); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+        }
+        .logo { font-family: 'Clash Display', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--text); }
+        .controls { display: flex; gap: 10px; }
+        .btn-ctrl {
+            background: transparent; border: 1px solid var(--border); color: var(--text);
+            padding: 8px 16px; border-radius: 50px; font-size: 0.8rem; transition: 0.3s; font-family: 'General Sans', sans-serif; cursor: none;
+        }
+        .btn-ctrl:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 100px 10%; text-align: center; position: relative;
+        }
+        .profile-img-box {
+            width: 200px; height: 200px; margin: 0 auto 40px; border-radius: 50%; overflow: hidden;
+            border: 4px solid var(--card-bg); box-shadow: 0 20px 40px rgba(0,0,0,0.3); transition: 0.5s;
+        }
+        .profile-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-img-box:hover { transform: scale(1.05); border-color: var(--accent); }
+        .hero-title {
+            font-family: 'Clash Display', sans-serif; font-size: 4rem; line-height: 1.1; margin-bottom: 20px;
+            text-transform: uppercase; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+        }
+        .hero-char { display: inline-block; transition: transform 0.3s ease; }
+        .hero-char:hover { transform: skewY(15deg) scale(1.2); color: var(--accent); }
+        .hero-subtitle {
+            font-size: 1.2rem; opacity: 0.8; margin-bottom: 40px; letter-spacing: 1px; color: var(--accent);
+            min-height: 1.5em;
+        }
+        .typing-cursor { border-right: 2px solid var(--accent); animation: blink 0.7s infinite; }
+        @keyframes blink { 50% { border-color: transparent; } }
+        .btn-main {
+            display: inline-block; padding: 15px 40px; background: var(--accent); color: #000;
+            font-weight: 600; text-transform: uppercase; border-radius: 50px; letter-spacing: 1px;
+            transition: 0.3s; text-decoration: none;
+        }
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(201, 162, 39, 0.4); }
+
+        /* SECTIONS COMMON */
+        section { padding: 120px 10%; border-bottom: 1px solid var(--border); }
+        .section-title { font-family: 'Clash Display', sans-serif; font-size: 3rem; margin-bottom: 60px; text-align: center; color: var(--text); }
+
+        /* --- BOOK (ABOUT ME) --- */
+        .book-wrapper { perspective: 1500px; display: flex; justify-content: center; }
+        .book {
+            width: 100%; max-width: 700px; height: 450px; position: relative;
+            transform-style: preserve-3d; transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        .book.flipped { transform: rotateY(-180deg); }
+        .book-page {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; padding: 50px; border-radius: 10px;
+            background: var(--card-bg); border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+        .page-front { z-index: 2; border-right: 4px solid var(--accent); }
+        .page-back { transform: rotateY(180deg); border-left: 4px solid var(--accent); }
+        .book-text { font-size: 1.1rem; line-height: 1.8; text-align: justify; }
+        .book-hint { margin-top: 20px; font-size: 0.8rem; text-align: center; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; animation: pulse 2s infinite; }
+
+        /* --- TIMELINE EXPERIENCE --- */
+        .timeline-container {
+            max-width: 800px; margin: 0 auto; position: relative; padding-left: 30px;
+        }
+        .timeline-line {
+            position: absolute; left: 0; top: 0; width: 2px; height: 100%;
+            background: linear-gradient(to bottom, var(--accent), var(--border));
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 50px; padding-left: 40px;
+        }
+        .timeline-dot {
+            position: absolute; left: -9px; top: 0; width: 20px; height: 20px;
+            background: var(--bg); border: 2px solid var(--accent); border-radius: 50%;
+            transition: 0.3s;
+        }
+        .timeline-item:hover .timeline-dot { background: var(--accent); box-shadow: 0 0 15px var(--accent); }
+        .timeline-date {
+            font-size: 0.9rem; color: var(--accent); font-weight: 600; margin-bottom: 5px; letter-spacing: 1px;
+        }
+        .timeline-title {
+            font-family: 'Clash Display', sans-serif; font-size: 1.5rem; margin-bottom: 10px;
+        }
+        .timeline-desc {
+            font-size: 1rem; opacity: 0.7; line-height: 1.6;
+        }
+
+        /* --- EDUCATION (HORIZONTAL) --- */
+        .edu-wrapper {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            position: relative; margin-top: 40px; gap: 20px;
+        }
+        .edu-wrapper::before {
+            content: ''; position: absolute; top: 20px; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(to right, var(--accent), var(--border)); z-index: 0; opacity: 0.5;
+        }
+        .edu-col {
+            flex: 1; position: relative; z-index: 1; text-align: center;
+        }
+        .edu-marker {
+            width: 40px; height: 40px; background: var(--card-bg); border: 2px solid var(--accent);
+            border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; color: var(--accent); font-weight: bold; transition: 0.3s;
+        }
+        .edu-col:hover .edu-marker { background: var(--accent); color: var(--bg); transform: scale(1.1); box-shadow: 0 0 20px var(--accent); }
+        .edu-card {
+            background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--border);
+            text-align: left; transition: 0.3s; position: relative; min-height: 180px; display: flex; flex-direction: column; justify-content: center;
+        }
+        .edu-col:hover .edu-card { transform: translateY(-5px); border-color: var(--accent); }
+        .edu-years { color: var(--accent); font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
+        .edu-school { font-family: 'Clash Display', sans-serif; font-size: 1.1rem; margin-bottom: 5px; color: var(--text); }
+        .edu-diploma { font-size: 0.9rem; opacity: 0.7; line-height: 1.4; }
+        .incoming-badge {
+            position: absolute; top: -12px; right: -10px;
+            background: var(--accent); color: #000; font-size: 0.65rem; padding: 6px 12px;
+            border-radius: 50px; font-weight: 800; text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(201, 162, 39, 0.4);
+            animation: bounceBadge 2s infinite ease-in-out; z-index: 5;
+        }
+        @keyframes bounceBadge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        /* --- NEW SECTION: TESTIMONIALS (RECOMMANDATIONS) --- */
+        .testi-wrapper {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;
+        }
+        .testi-card {
+            background: var(--card-bg); border: 1px solid var(--border); padding: 40px; border-radius: 15px;
+            position: relative; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between;
+            max-width: 500px; width: 100%;
+        }
+        .testi-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .quote-icon { font-size: 2rem; color: var(--accent); margin-bottom: 20px; opacity: 0.5; }
+        .testi-text { font-style: italic; opacity: 0.9; line-height: 1.6; margin-bottom: 30px; font-size: 1.05rem; }
+        .testi-author { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .testi-author h3 { font-family: 'Clash Display', sans-serif; font-size: 1.2rem; margin-bottom: 5px; color: var(--text); }
+        .testi-author span { font-size: 0.85rem; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- HOBBIES --- */
+        .hobbies-intro { text-align: center; max-width: 800px; margin: 0 auto 60px; font-size: 1.2rem; font-style: italic; opacity: 0.7; line-height: 1.6; }
+        .accordion { display: flex; height: 600px; gap: 10px; }
+        .hobby-panel { flex: 1; position: relative; overflow: hidden; border-radius: 20px; transition: flex 0.5s ease; border: 1px solid var(--border); }
+        .hobby-panel:hover { flex: 3; border-color: var(--accent); }
+        .hobby-vid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) brightness(0.6); transition: 0.5s; }
+        .hobby-panel:hover .hobby-vid { filter: grayscale(0%) brightness(1); }
+        .hobby-content { position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); color: #fff; transform: translateY(100px); transition: 0.4s; opacity: 0; }
+        .hobby-panel:hover .hobby-content { transform: translateY(0); opacity: 1; }
+        .hobby-title { font-family: 'Clash Display', sans-serif; font-size: 2rem; margin-bottom: 10px; color: var(--accent); }
+        .hobby-desc { font-size: 0.95rem; line-height: 1.5; }
+
+        /* --- SKILLS 3D FLIP CARDS --- */
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
+        .flip-card { background-color: transparent; width: 100%; height: 350px; perspective: 1000px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s; transform-style: preserve-3d; }
+        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border-radius: 15px; border: 1px solid var(--border);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;
+        }
+        .flip-card-front { background-color: var(--card-bg); }
+        .skill-icon-big { font-size: 4rem; color: var(--accent); margin-bottom: 20px; }
+        .skill-title-big { font-family: 'Clash Display', sans-serif; font-size: 1.5rem; text-transform: uppercase; }
+        .flip-card-back {
+            background-color: var(--card-bg); color: var(--text); transform: rotateY(180deg);
+            border-color: var(--accent); box-shadow: 0 0 20px rgba(201, 162, 39, 0.2);
+        }
+        .skill-list { list-style: none; text-align: left; width: 100%; }
+        .skill-list li { margin-bottom: 12px; font-size: 0.95rem; position: relative; padding-left: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
+        .skill-list li::before { content: '>'; color: var(--accent); position: absolute; left: 0; }
+
+        /* --- FOOTER --- */
+        footer { padding: 100px 10%; text-align: center; background: var(--card-bg); }
+        .contact-icons { display: flex; justify-content: center; gap: 40px; margin: 40px 0; }
+        .icon-link {
+            font-size: 2rem; color: var(--text); transition: 0.4s; display: flex; align-items: center; justify-content: center;
+            width: 60px; height: 60px; border-radius: 50%; border: 1px solid transparent;
+        }
+        .icon-link:hover { color: var(--accent); transform: scale(1.2); border-color: var(--accent); background: rgba(201, 162, 39, 0.1); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .accordion { flex-direction: column; height: auto; }
+            .hobby-panel { height: 200px; }
+            .hobby-panel:hover { height: 400px; }
+            .book { height: 650px; }
+            .cursor { display: none; }
+            
+            .edu-wrapper { flex-direction: column; gap: 40px; }
+            .edu-wrapper::before { width: 2px; height: 100%; left: 20px; top: 0; background: linear-gradient(to bottom, var(--accent), var(--border)); }
+            .edu-col { display: flex; text-align: left; padding-left: 0; align-items: flex-start; }
+            .edu-marker { margin: 0 20px 0 0; min-width: 40px; }
+            .edu-card { width: 100%; min-height: auto; }
+            
+            .testi-card { width: 100%; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <canvas id="particles-js"></canvas>
+    <div class="cursor" id="cursor"></div>
+
+    <nav>
+        <div class="logo">GP.</div>
+        <div class="controls">
+            <button class="btn-ctrl hover-target" id="lang-btn">EN</button>
+            <button class="btn-ctrl hover-target" id="theme-btn">☀</button>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="profile-img-box hover-target">
+            <img src="Photo_Gaby.jpg" alt="Gabriel Pristavu">
+        </div>
+        <h1 class="hero-title" id="hero-name"></h1>
+        <div class="hero-subtitle">
+            <span id="typing-text"></span><span class="typing-cursor"></span>
+        </div>
+        <a href="Gabriel Pristavu CV (5).pdf" download class="btn-main hover-target" id="btn-cv">Télécharger CV</a>
+    </header>
+
+    <section id="story">
+        <h2 class="section-title" id="title-story">About Me</h2>
+        <div class="book-wrapper">
+            <div class="book hover-target" id="book">
+                <div class="book-page page-front">
+                    <div class="book-text" id="text-quote">
+                        "Le talent, c’est rien sans travail. La victoire, c’est le résultat d’un engagement sans faille, jour après jour.<br><br>
+                        Je ne cherche pas l’applaudissement, je cherche l’excellence.<br><br>
+                        Si tu cherches quelqu’un de polyvalent, déterminé et authentique… tu viens peut-être de me trouver."
+                    </div>
+                    <div class="book-hint" id="hint-read">Cliquez pour lire la suite</div>
+                </div>
+                <div class="book-page page-back">
+                    <div class="book-text" id="text-story">
+                        <strong>Déraciné pour mieux s'ancrer.</strong><br><br>
+                        Arriver en France à 15 ans, c’était comme sauter dans un train en marche. J’ai transformé cette contrainte en ma plus grande force : l'observation et l'adaptation rapide.<br><br>
+                        Apprendre le français n'était pas une option, c'était une survie. Aujourd'hui, cette résilience est le moteur de ma carrière.
+                    </div>
+                    <div class="book-hint" id="hint-return">Cliquez pour retourner</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <h2 class="section-title" id="title-exp">Expérience</h2>
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+            
+            <div class="timeline-item hover-target">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">OCT 2024 - PRÉSENT</div>
+                <h3 class="timeline-title">Leroy Merlin - Responsable Logistique (Alternance)</h3>
+                <p class="timeline-desc" id="exp-1">Pilotage des flux, Management d'équipe, Suivi KPI, Safety Tours, Optimisation Pyxis/Lastmile.</p>
+            </div>
+
+            <div class="timeline-item hover-target">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">MAI 2024 - JUIN 2024</div>
+                <h3 class="timeline-title">Spinbreak - Business Dev</h3>
+                <p class="timeline-desc" id="exp-2">Gestion service client, prospection B2B/B2C, communication & management du studio.</p>
+            </div>
+
+            <div class="timeline-item hover-target">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">AOÛT 2023 - JUIL 2024</div>
+                <h3 class="timeline-title">Auchan - Préparateur Drive/Gestionnaire de stocks</h3>
+                <p class="timeline-desc" id="exp-3">Préparation commandes, gestion stocks (Red Prairie), coordination équipe.</p>
+            </div>
+            
+            <div class="timeline-item hover-target">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">2025</div>
+                <h3 class="timeline-title">Arkea Arena - Hôte d'accueil</h3>
+                <p class="timeline-desc" id="exp-4">Accueil visiteurs, gestion de flux lors d'événements majeurs.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="education">
+        <h2 class="section-title" id="title-edu">Études</h2>
+        <div class="edu-wrapper">
+            <div class="edu-col hover-target">
+                <div class="edu-marker"><i class="fas fa-graduation-cap"></i></div>
+                <div class="edu-card">
+                    <div class="edu-years">2022 - 2023</div>
+                    <h3 class="edu-school">Lycée Van Gogh</h3>
+                    <div class="edu-diploma" id="edu-1">Baccalauréat STMG<br>Gestion Finance</div>
+                </div>
+            </div>
+            <div class="edu-col hover-target">
+                <div class="edu-marker"><i class="fas fa-university"></i></div>
+                <div class="edu-card">
+                    <div class="edu-years">2023 - 2025</div>
+                    <h3 class="edu-school">ESG Bordeaux</h3>
+                    <div class="edu-diploma" id="edu-2">Bachelor Généraliste Augmenté<br>Section Anglophone</div>
+                </div>
+            </div>
+            <div class="edu-col hover-target">
+                <div class="edu-marker"><i class="fas fa-box-open"></i></div>
+                <div class="edu-card">
+                    <div class="edu-years">2025 - 2026</div>
+                    <h3 class="edu-school">KEDGE BS</h3>
+                    <div class="edu-diploma" id="edu-3">Bachelor Spécialité<br>Supply Chain</div>
+                </div>
+            </div>
+            <div class="edu-col hover-target">
+                <div class="edu-marker"><i class="fas fa-rocket"></i></div>
+                <div class="edu-card" style="border-color: var(--accent);">
+                    <div class="incoming-badge" id="badge-incoming">Incoming 🚀</div>
+                    <div class="edu-years">2026 - 2027</div>
+                    <h3 class="edu-school">KEDGE BS</h3>
+                    <div class="edu-diploma" id="edu-4">Master MAI - Management des Achats Internationaux & Innovation</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials">
+        <h2 class="section-title" id="title-testi">Recommandations</h2>
+        <div class="testi-wrapper">
+            
+            <div class="testi-card hover-target">
+                <i class="fas fa-quote-left quote-icon"></i>
+                <p class="testi-text" id="testi-1-text">
+                    "J’apprécie énormément ton travail et ton implication. Toujours disponible, toujours dans une volonté d’apprendre et de découvrir le métier. Très souvent positif, et avec un contact client qui — je te l’ai déjà dit — est un gros atout pour le service. Avenant, souriant, on voit que le contact client te plaît."
+                </p>
+                <div class="testi-author">
+                    <h3>Laury Lamour</h3>
+                    <span>Responsable Logistique - Leroy Merlin</span>
+                </div>
+            </div>
+
+            </div>
+    </section>
+
+    <section id="hobbies">
+        <h2 class="section-title" id="title-hobbies">Passions</h2>
+        <p class="hobbies-intro" id="hobbies-intro">
+            "Un équilibre entre mouvement et précision. Des univers où la vitesse rencontre le calme, où chaque geste compte. Rien n’est laissé au hasard, tout est maîtrise."
+        </p>
+
+        <div class="accordion">
+            <div class="hobby-panel hover-target">
+                <video src="video_f1.mp4" class="hobby-vid" muted loop autoplay></video>
+                <div class="hobby-content">
+                    <h3 class="hobby-title">Formula 1</h3>
+                    <p class="hobby-desc" id="desc-f1">
+                        "La Formule 1, c’est plus qu’un sport : c’est ce monde où chaque seconde se gagne à force de précision. Pas besoin d’être sur la grille pour s’y reconnaître — il suffit d’avoir la même obsession du détail et l'exigence de performance."
+                    </p>
+                </div>
+            </div>
+            <div class="hobby-panel hover-target">
+                <video src="video_foot.mp4" class="hobby-vid" muted loop autoplay></video>
+                <div class="hobby-content">
+                    <h3 class="hobby-title">Football</h3>
+                    <p class="hobby-desc" id="desc-foot">
+                        "Le football dépasse le simple jeu. C’est une danse d’efforts, de tactique et de cœur. Même en dehors du terrain, ceux qui partagent cette passion comprennent ce que signifie se battre pour l'équipe et aller toujours plus loin."
+                    </p>
+                </div>
+            </div>
+            <div class="hobby-panel hover-target">
+                <video src="video_rando.mp4" class="hobby-vid" muted loop autoplay></video>
+                <div class="hobby-content">
+                    <h3 class="hobby-title" id="title-hiking">Randonnée</h3>
+                    <p class="hobby-desc" id="desc-hiking">
+                        "La randonnée, ce n’est pas seulement marcher : c’est ce voyage où chaque pas rapproche de soi-même. C’est le goût de l’effort, la patience, et ce besoin d’aller toujours plus haut, toujours plus loin."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2 class="section-title" id="title-skills">Compétences</h2>
+        
+        <div class="skills-grid">
+            
+            <div class="flip-card hover-target">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <i class="fas fa-boxes skill-icon-big"></i>
+                        <h3 class="skill-title-big" id="cat-log">Logistique</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <ul class="skill-list">
+                            <li>Gestion des flux</li>
+                            <li>Suivi des KPI</li>
+                            <li>Optimisation Stocks</li>
+                            <li>Coordination services</li>
+                            <li>Qualité & Sécurité</li>
+                            <li>CACES 1B et 3</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flip-card hover-target">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <i class="fas fa-laptop-code skill-icon-big"></i>
+                        <h3 class="skill-title-big" id="cat-tools">Outils & IT</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <ul class="skill-list">
+                            <li>Reflex, Pyxis, Lastmile</li>
+                            <li>Power BI</li>
+                            <li>Excel Expert</li>
+                            <li>Figma, Canva</li>
+                            <li>Notion</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flip-card hover-target">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <i class="fas fa-user-astronaut skill-icon-big"></i>
+                        <h3 class="skill-title-big" id="cat-soft">Savoir-Être</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <ul class="skill-list">
+                            <li id="soft-1">Persévérance</li>
+                            <li id="soft-2">Leadership</li>
+                            <li id="soft-3">Adaptabilité</li>
+                            <li id="soft-4">Communication</li>
+                            <li id="soft-5">Résolution problèmes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flip-card hover-target">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <i class="fas fa-globe skill-icon-big"></i>
+                        <h3 class="skill-title-big" id="cat-lang">Langues</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <ul class="skill-list">
+                            <li id="lang-ro">🇷🇴 Roumanie (Natif)</li>
+                            <li id="lang-fr">🇫🇷 Français (Bilingue)</li>
+                            <li id="lang-en">🇬🇧 Anglais (C1)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <h2 class="section-title" id="title-contact">Restons connectés</h2>
+        <div class="contact-icons">
+            <a href="mailto:pristavugabrie@gmail.com" class="icon-link hover-target" title="Email"><i class="fas fa-envelope"></i></a>
+            <a href="tel:+33758626957" class="icon-link hover-target" title="Téléphone"><i class="fas fa-phone"></i></a>
+            <a href="https://www.linkedin.com/in/gabriel-pristavu-b31793252" target="_blank" class="icon-link hover-target" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <p style="font-size: 0.8rem; opacity: 0.3; margin-top: 50px;">© 2025 Gabriel Pristavu.</p>
+    </footer>
+
+    <script>
+        /* --- 1. NOM HERO --- */
+        const nameContainer = document.getElementById('hero-name');
+        const fullName = "Pristavu Gabriel";
+        fullName.split('').forEach(char => {
+            const span = document.createElement('span'); span.className = 'hero-char';
+            span.innerHTML = char === ' ' ? '&nbsp;' : char; nameContainer.appendChild(span);
+        });
+
+        /* --- 2. TYPING --- */
+        const typingElement = document.getElementById('typing-text');
+        let typingInterval;
+        function typeWriter(text, i, fnCallback) {
+            if (i < text.length) {
+                typingElement.innerHTML = text.substring(0, i+1);
+                typingInterval = setTimeout(function() { typeWriter(text, i + 1, fnCallback) }, 80);
+            } else if (typeof fnCallback == 'function') { setTimeout(fnCallback, 700); }
+        }
+        function startTyping(text) { clearTimeout(typingInterval); typingElement.innerHTML = ""; typeWriter(text, 0); }
+
+        /* --- 3. THEME --- */
+        const themeBtn = document.getElementById('theme-btn');
+        themeBtn.addEventListener('click', () => {
+            if(document.body.getAttribute('data-theme') === 'light') {
+                document.body.setAttribute('data-theme', 'dark'); themeBtn.innerText = '☀';
+            } else {
+                document.body.setAttribute('data-theme', 'light'); themeBtn.innerText = '☾';
+            }
+        });
+
+        /* --- 4. BOOK --- */
+        document.getElementById('book').addEventListener('click', function() { this.classList.toggle('flipped'); });
+
+        /* --- 5. TRANSLATIONS --- */
+        const content = {
+            fr: {
+                subType: "Étudiant | Supply Chain /Achats | Bordeaux 🍇",
+                btn: "Télécharger CV",
+                tStory: "About Me",
+                txtQuote: "\"Le talent, c’est rien sans travail. La victoire, c’est le résultat d’un engagement sans faille, jour après jour.<br><br>Je ne cherche pas l’applaudissement, je cherche l’excellence.<br><br>Si tu cherches quelqu’un de polyvalent, déterminé et authentique… tu viens peut-être de me trouver.\"",
+                hintRead: "Cliquez pour lire la suite",
+                txtStory: "<strong>Déraciné pour mieux s'ancrer.</strong><br><br>Arriver en France à 15 ans, c’était comme sauter dans un train en marche. J’ai transformé cette contrainte en ma plus grande force : l'adaptation rapide.<br><br>Apprendre le français n'était pas une option, c'était une survie. Aujourd'hui, cette résilience est le moteur de ma carrière.",
+                hintReturn: "Cliquez pour retourner",
+                tExp: "Expérience",
+                exp1: "Pilotage des flux, Management d'équipe, Suivi KPI, Safety Tours, Optimisation Pyxis/Lastmile.",
+                exp2: "Gestion service client, prospection B2B/B2C, communication & management du studio.",
+                exp3: "Préparation commandes, gestion stocks Red Prairie, coordination équipe.",
+                exp4: "Accueil visiteurs, gestion de flux lors d'événements majeurs.",
+                
+                tEdu: "Études",
+                edu1: "Baccalauréat STMG<br>Gestion Finance",
+                edu2: "Bachelor Généraliste Augmenté<br>Section Anglophone",
+                edu3: "Bachelor Spécialité<br>Supply Chain",
+                edu4: "Master MAI - Management des Achats Internationaux & Innovation",
+                badgeIncoming: "Incoming 🚀",
+
+                /* TESTIMONIALS TRAD */
+                tTesti: "Recommandations",
+                testi1: "\"J'apprécie énormément ton travail et ton implication. Toujours disponible, dans une volonté d'apprendre et de découvrir le métier. Très souvent positif, ton contact client est un gros atout pour le service. Avenant et souriant, on voit que ça te plaît.\"",
+
+                tHobbies: "Passions",
+                introHobby: "\"Un équilibre entre mouvement et précision. Des univers où la vitesse rencontre le calme...\"",
+                descF1: "\"La Formule 1, c’est plus qu’un sport : c’est ce monde où chaque seconde se gagne à force de précision...\"",
+                descFoot: "\"Le football dépasse le simple jeu. C’est une danse d’efforts, de tactique et de cœur...\"",
+                tHiking: "Randonnée",
+                descHiking: "\"La randonnée, ce n’est pas seulement marcher : c’est ce voyage où chaque pas rapproche de soi-même...\"",
+                tSkills: "Compétences",
+                catLog: "Logistique",
+                catTools: "Outils & IT",
+                catSoft: "Savoir-Être",
+                catLang: "Langues",
+                soft1: "Persévérance",
+                soft2: "Leadership",
+                soft3: "Adaptabilité",
+                soft4: "Communication",
+                soft5: "Résolution problèmes",
+                langRo: "🇷🇴 Roumanie (Natif)",
+                langFr: "🇫🇷 Français (Bilingue)",
+                langEn: "🇬🇧 Anglais (C1)",
+                tContact: "Restons connectés"
+            },
+            en: {
+                subType: "Student | Supply Chain / Purchasing | Bordeaux 🍇",
+                btn: "Download CV",
+                tStory: "About Me",
+                txtQuote: "\"Talent is nothing without hard work. Victory is the result of unwavering commitment...\"",
+                hintRead: "Click to read more",
+                txtStory: "<strong>Uprooted to anchor better.</strong><br><br>Arriving in France at 15 was like jumping onto a moving train... I turned this constraint into my greatest strength.",
+                hintReturn: "Click to return",
+                tExp: "Experience",
+                exp1: "Flow management, Team management, KPI tracking, Safety Tours, Process optimization.",
+                exp2: "Customer service, B2B/B2C sales, communication & studio management.",
+                exp3: "Order picking, stock management (Red Prairie), team coordination.",
+                exp4: "Visitor welcome, flow management during major events.",
+
+                tEdu: "Education",
+                edu1: "High School Diploma<br>Finance Management",
+                edu2: "General Bachelor Degree<br>English Track",
+                edu3: "Bachelor Degree<br>Supply Chain Specialty",
+                edu4: "Master MAI - International Purchasing & Innovation Management",
+                badgeIncoming: "Incoming 🚀",
+
+                /* TESTIMONIALS TRAD */
+                tTesti: "Testimonials",
+                testi1: "\"I greatly appreciate your work and involvement. Always available, eager to learn and discover the job. Very positive, your customer contact is a huge asset for the department. Friendly and smiling, it is clear you enjoy it.\"",
+
+                tHobbies: "Hobbies",
+                introHobby: "\"A balance between movement and precision. Worlds where speed meets calm...\"",
+                descF1: "\"Formula 1 is more than a sport: it is a world where every second is won through precision...\"",
+                descFoot: "\"Football goes beyond the game. It is a dance of effort, tactics, and heart...\"",
+                tHiking: "Hiking",
+                descHiking: "\"Hiking is not just walking: it is a journey where every step brings you closer to yourself...\"",
+                tSkills: "Skills",
+                catLog: "Logistics",
+                catTools: "Tools & IT",
+                catSoft: "Soft Skills",
+                catLang: "Languages",
+                soft1: "Perseverance",
+                soft2: "Leadership",
+                soft3: "Adaptability",
+                soft4: "Communication",
+                soft5: "Problem Solving",
+                langRo: "🇷🇴 Romania (Native)",
+                langFr: "🇫🇷 French (Bilingual)",
+                langEn: "🇬🇧 English (C1)",
+                tContact: "Let's Connect"
+            }
+        };
+
+        let currentLang = 'fr';
+        const langBtn = document.getElementById('lang-btn');
+
+        // Init typing
+        startTyping(content[currentLang].subType);
+
+        langBtn.addEventListener('click', () => {
+            currentLang = currentLang === 'fr' ? 'en' : 'fr';
+            langBtn.innerText = currentLang.toUpperCase();
+            
+            const t = content[currentLang];
+            startTyping(t.subType);
+
+            document.getElementById('btn-cv').innerText = t.btn;
+            document.getElementById('title-story').innerText = t.tStory;
+            document.getElementById('text-quote').innerHTML = t.txtQuote;
+            document.getElementById('hint-read').innerText = t.hintRead;
+            document.getElementById('text-story').innerHTML = t.txtStory;
+            document.getElementById('hint-return').innerText = t.hintReturn;
+            document.getElementById('title-exp').innerText = t.tExp;
+            document.getElementById('exp-1').innerText = t.exp1;
+            document.getElementById('exp-2').innerText = t.exp2;
+            document.getElementById('exp-3').innerText = t.exp3;
+            document.getElementById('exp-4').innerText = t.exp4;
+            
+            document.getElementById('title-edu').innerText = t.tEdu;
+            document.getElementById('edu-1').innerHTML = t.edu1;
+            document.getElementById('edu-2').innerHTML = t.edu2;
+            document.getElementById('edu-3').innerHTML = t.edu3;
+            document.getElementById('edu-4').innerText = t.edu4;
+            document.getElementById('badge-incoming').innerText = t.badgeIncoming;
+
+            /* TESTIMONIALS UPDATE */
+            document.getElementById('title-testi').innerText = t.tTesti;
+            document.getElementById('testi-1-text').innerText = t.testi1;
+
+            document.getElementById('title-hobbies').innerText = t.tHobbies;
+            document.getElementById('hobbies-intro').innerText = t.introHobby;
+            document.getElementById('desc-f1').innerText = t.descF1;
+            document.getElementById('desc-foot').innerText = t.descFoot;
+            document.getElementById('title-hiking').innerText = t.tHiking;
+            document.getElementById('desc-hiking').innerText = t.descHiking;
+            document.getElementById('title-skills').innerText = t.tSkills;
+            document.getElementById('cat-log').innerText = t.catLog;
+            document.getElementById('cat-tools').innerText = t.catTools;
+            document.getElementById('cat-soft').innerText = t.catSoft;
+            document.getElementById('cat-lang').innerText = t.catLang;
+            document.getElementById('soft-1').innerText = t.soft1;
+            document.getElementById('soft-2').innerText = t.soft2;
+            document.getElementById('soft-3').innerText = t.soft3;
+            document.getElementById('soft-4').innerText = t.soft4;
+            document.getElementById('soft-5').innerText = t.soft5;
+            document.getElementById('lang-ro').innerText = t.langRo;
+            document.getElementById('lang-fr').innerText = t.langFr;
+            document.getElementById('lang-en').innerText = t.langEn;
+            document.getElementById('title-contact').innerText = t.tContact;
+        });
+
+        /* --- 6. PARTICULES --- */
+        const canvas = document.getElementById('particles-js');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particles = [];
+        class Particle {
+            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2; this.sx = Math.random() - 0.5; this.sy = Math.random() - 0.5; }
+            update() { this.x += this.sx; this.y += this.sy; if(this.x > canvas.width || this.x < 0) this.sx *= -1; if(this.y > canvas.height || this.y < 0) this.sy *= -1; }
+            draw() { ctx.fillStyle = document.body.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
+        }
+        function initParticles() { particles = []; for(let i=0; i<40; i++) particles.push(new Particle()); }
+        function animateParticles() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            for(let i=0; i<particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                for(let j=i; j<particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y;
+                    if(Math.sqrt(dx*dx+dy*dy) < 150) {
+                        ctx.strokeStyle = document.body.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+                        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles(); animateParticles();
+        window.addEventListener('resize', () => { canvas.width=window.innerWidth; canvas.height=window.innerHeight; initParticles(); });
+
+        /* --- 7. CURSOR --- */
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => { cursor.style.top = e.clientY + 'px'; cursor.style.left = e.clientX + 'px'; });
+        document.querySelectorAll('.hover-target').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+    </script>
+</body>
+</html>
